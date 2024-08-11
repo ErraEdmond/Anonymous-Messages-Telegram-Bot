@@ -16,7 +16,7 @@ admin_keyboard = ReplyKeyboardMarkup(resize_keyboard=True,
 ])
 
 go_back = ReplyKeyboardMarkup(resize_keyboard=True,
-                              input_field_placeholder='Лучше бы вернуться назад!', 
+                              input_field_placeholder='Выберите действие', 
                               keyboard=[
                                   [KeyboardButton(text='Назад')]
                                   ])
