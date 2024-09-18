@@ -1,2 +1,2 @@
-TOKEN = '' #str 
-ADMIN = [] #str
+TOKEN =''
+ADMIN = ['']
