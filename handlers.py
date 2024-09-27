@@ -6,6 +6,7 @@ from aiogram.types import Message
 import keyboard as kb
 from fsm import SendingMessage, AdminState
 from config import ADMIN
+from app.requests import set_message
 
 
 rt = Router()
@@ -72,12 +73,10 @@ async def send_message_1(message : Message, state: FSMContext) -> None:
 @rt.message(SendingMessage.sending)
 async def send_message_2(message : Message, state : FSMContext) -> None:
     data = await state.get_data()
-
-    with open(file='messages.txt', mode='a') as f:
-            if data['sending'] == 'not_anon':
-                f.write(f'{message.from_user.id}, {message.text} \n')
-            if data['sending'] == 'anon':
-                f.write(f'Anon, {message.text} \n')
+    if data['sending'] == 'not_anon':
+        await set_message(tg_id=message.from_user.username, message_text=message.text)
+    if data['sending'] == 'anon':
+        await set_message(tg_id='None', message_text=message.text)
     await message.reply('Cообщение отправлено!')
     await state.clear()
 
