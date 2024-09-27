@@ -8,7 +8,3 @@ class AdminState(StatesGroup):
     is_admin = State()
     reading = State()
 
-print(AdminState)
-print(AdminState.is_admin.__getstate__())
-
-
