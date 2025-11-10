@@ -5,7 +5,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from config import TOKEN
 from handlers import rt
-from app.modules_db import async_main
+from app.models import async_main, Message
 
 async def main():
     await async_main()
@@ -14,7 +14,6 @@ async def main():
     dp.include_router(rt)
     await dp.start_polling(bot)
     #waiting to transfuse a request from a TG server to the bot 
-    
 
 if __name__ == '__main__': 
     try:

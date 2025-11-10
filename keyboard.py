@@ -1,4 +1,5 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton 
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup 
+
 
 
 
@@ -27,3 +28,7 @@ reading_messages = ReplyKeyboardMarkup(resize_keyboard=True,
                                            [KeyboardButton(text='Читать сообщения'), KeyboardButton(text='Закончить чтение')]
                                        ]
                                        )
+
+sent_message_action = InlineKeyboardMarkup(inline_keyboard=[
+[InlineKeyboardButton(text='Ban user⛔', callback_data=None), InlineKeyboardButton(text='Send appreciation')]
+    ])

@@ -1,23 +1,27 @@
 from aiogram.fsm.context import FSMContext
 from aiogram import F, Router
-from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.filters import CommandStart, Command,  MagicData
+from aiogram.types import Message, ContentType, CallbackQuery 
+from aiogram.methods import SendMessage 
 
 import keyboard as kb
 from fsm import SendingMessage, AdminState
-from config import ADMIN
-from app.requests import set_message
+from config import ADMIN, START_MESSAGE, BANNED_USERS
+from app.requests import db_set_message, db_read_message
 
 
 rt = Router()
+
+@rt.message(F.from_user.id == BANNED_USERS)
+async def banned_users(message: Message): 
+    await message.reply('Ты был забанен, лол!')
 
 
 @rt.message(F.text == 'Назад')
 @rt.message(CommandStart())
 async def hello(message : Message) -> None:
-    await message.answer(
-        '''Привет! Это анонимка канала "Игра Преколов", здесь ты можешь задать любой вопрос и получить ответ''',
-        reply_markup=kb.first_keyboard)
+    await message.answer(START_MESSAGE, reply_markup=kb.first_keyboard)
+    
 
 
 @rt.message(F.text == 'Админ панель 🔑')
@@ -41,13 +45,19 @@ if AdminState.is_admin:
     
     @rt.message(F.text == 'Читать сообщения')
     async def reading_messages(message : Message):
-        with open(file='messages.txt', mode='r+') as f:
-            new_message = f.readline(20)
-        await message.answer(text=new_message, reply_markup=kb.reading_messages)
+        message_db = await db_read_message()
+
+        if message_db[1] != None: 
+            await message.answer_photo(caption=message_db[0], 
+                                       reply_markup=kb.reading_messages, 
+                                       photo=message_db[1])
+        else: 
+            await message.answer(text=message_db[0], reply_markup=kb.reading_messages)
     
     @rt.message(F.text == 'Закончить чтение')
     async def end_of_reading(message : Message, state : FSMContext) -> None: 
-        await state.update_data(reading = False)
+        await state.clear()
+        await message.reply('Отлично почитали :)', reply_markup= kb.first_keyboard)
 
 
 @rt.message(Command('info'))
@@ -55,7 +65,8 @@ async def get_message_info(message : Message) -> None:
     await message.reply(text=f'''
                     Message id: {message.message_id}, 
                     user id: {message.from_user.id}, 
-                    text of message of: {message.text}'''
+                    text of message of: {message.text}
+                    dump: {message.model_dump()}'''
                     )
     
 
@@ -63,24 +74,69 @@ async def get_message_info(message : Message) -> None:
 @rt.message(F.text == 'Послать сообщение с подписью 📧')
 async def send_message_1(message : Message, state: FSMContext) -> None:
     await state.set_state(SendingMessage.sending)
+
     if message.text == 'Послать сообщение анонимно ✉️':
         await state.update_data(sending = 'anon')
     if message.text == 'Послать сообщение с подписью 📧':
         await state.update_data(sending = 'not_anon')
+
     await message.reply(text='Введите сообщения', reply_markup=kb.go_back)
 
 
-@rt.message(SendingMessage.sending)
-async def send_message_2(message : Message, state : FSMContext) -> None:
+@rt.message(SendingMessage.sending and F.photo)
+async def send_message_with_photo(message : Message, state : FSMContext) -> None:
     data = await state.get_data()
-    if data['sending'] == 'not_anon':
-        await set_message(tg_id=message.from_user.username, message_text=message.text)
-    if data['sending'] == 'anon':
-        await set_message(tg_id='None', message_text=message.text)
+    base = message.model_dump() 
+    caption = base['caption']
+    photo_id = base['photo'][0]['file_id']
+    print (type(caption), type(photo_id), caption, photo_id)
+
+    if data.get('sending') == 'not_anon':
+        await db_set_message(tg_id=f'@{message.from_user.username}', 
+                             message_text=caption, 
+                             message_attachment=photo_id, 
+                             chat_id=message.model_dump().get('chat').get('id'))
+    if data.get('sending') == 'anon':   
+        await db_set_message(tg_id='Anon', message_text=caption, message_attachment=photo_id)
+
     await message.reply('Cообщение отправлено!')
     await state.clear()
 
 
+@rt.message(SendingMessage.sending) 
+async def send_message_2(message : Message, state : FSMContext) -> None:
+    data = await state.get_data()
+
+    if data.get('sending') == 'not_anon':
+        await db_set_message(username=f'@{message.from_user.username}', 
+                             message_text=str(message.text), 
+                             message_attachment=None,
+                             user_id=message.model_dump().get('chat').get('id'))
+    if data.get('sending') == 'anon':   
+        await db_set_message(username='Anon', 
+                            message_text=str(message.text), 
+                            message_attachment=None,
+                            user_id=message.model_dump().get('chat').get('id'))
+        
+    await message.reply('Cообщение отправлено!')
+    await state.clear()
 
 
+# message_message_attachment=message.photo[-1].file_id
+@rt.callback_query(F.data == 'appreciation')
+async def send_appreciation(callback : CallbackQuery): 
+    pass
 
+
+@rt.message(Command('chat_id', 'Chat_id'))
+async def get_chat_id(message : Message) -> None: 
+    chat_id = message.model_dump().get('chat').get('id')
+    chat_info = await message.bot.get_chat(chat_id=chat_id)
+    await message.reply(text=f'{chat_info}, {type(chat_info)}')
+
+
+@rt.message(Command('user_id'))
+async def get_id(message : Message) -> None: 
+    user_id = message.model_dump()
+    await message.reply(
+        text=f"ur id is: {user_id}") 

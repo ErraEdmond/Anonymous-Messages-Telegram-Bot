@@ -1,2 +1,5 @@
 .venv/
 __pycache__
+.qodo
+database.sqlite3
+app/__pycache__
