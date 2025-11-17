@@ -3,3 +3,6 @@ __pycache__
 .qodo
 database.sqlite3
 app/__pycache__
+.vscode 
+.pylint.rc
+database.sqlite3

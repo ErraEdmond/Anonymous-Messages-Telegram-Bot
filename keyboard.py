@@ -3,9 +3,10 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardBut
 
 
 
-first_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, input_field_placeholder='', 
+first_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, 
+                                    input_field_placeholder='', 
                                      keyboard=[
-    [KeyboardButton(text='Послать сообщение анонимно ✉️'), KeyboardButton(text='Послать сообщение с подписью 📧')],
+   [KeyboardButton(text='Послать сообщение анонимно ✉️'), KeyboardButton(text='Послать сообщение с подписью 📧')],
     [KeyboardButton(text='Админ панель 🔑')]
     ])
 
@@ -29,6 +30,7 @@ reading_messages = ReplyKeyboardMarkup(resize_keyboard=True,
                                        ]
                                        )
 
-sent_message_action = InlineKeyboardMarkup(inline_keyboard=[
-[InlineKeyboardButton(text='Ban user⛔', callback_data=None), InlineKeyboardButton(text='Send appreciation')]
-    ])
+answer_message_action = InlineKeyboardMarkup(inline_keyboard = [
+[InlineKeyboardButton(text='Ban user⛔', callback_data=None), InlineKeyboardButton(text='Send appreciation')],
+[InlineKeyboardButton(text='Sent an answer', callback_data=None)]
+])

@@ -2,18 +2,19 @@ import asyncio
 import sys 
 import logging
 
-from aiogram import Bot, Dispatcher
-from config import TOKEN
 from handlers import rt
-from app.models import async_main, Message
+from app.models import async_main 
+from config import bot, dp
+
 
 async def main():
+    '''Main loop'''
     await async_main()
-    bot = Bot(token=TOKEN)
-    dp = Dispatcher()
     dp.include_router(rt)
     await dp.start_polling(bot)
     #waiting to transfuse a request from a TG server to the bot 
+    #instance is a class, containing Dispatcher and Bot itself.
+
 
 if __name__ == '__main__': 
     try:
