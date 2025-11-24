@@ -16,6 +16,7 @@ class Message(Base):
     message: Mapped[str] = mapped_column(String(2000), nullable=True)
     attachment: Mapped[str] = mapped_column(String(2000), nullable=True)
     user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    message_id: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
 async def async_main():

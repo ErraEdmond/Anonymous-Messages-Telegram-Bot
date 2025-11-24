@@ -6,3 +6,5 @@ app/__pycache__
 .vscode 
 .pylint.rc
 database.sqlite3
+.gitignore
+.true.txt

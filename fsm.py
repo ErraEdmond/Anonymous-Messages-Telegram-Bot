@@ -7,4 +7,5 @@ class SendingMessage(StatesGroup):
 class AdminState(StatesGroup):
     is_admin = State()
     reading = State()
-
+    message_data = State()
+    answer_message = State()

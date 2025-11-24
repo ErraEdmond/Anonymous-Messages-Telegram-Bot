@@ -26,7 +26,8 @@ go_back = ReplyKeyboardMarkup(resize_keyboard=True,
 reading_messages = ReplyKeyboardMarkup(resize_keyboard=True,
                                        input_field_placeholder='Выберите опцию',
                                        keyboard=[
-                                           [KeyboardButton(text='Читать сообщения'), KeyboardButton(text='Закончить чтение')]
+                                           [KeyboardButton(text='Читать сообщения'), KeyboardButton(text='Закончить чтение')],
+                                           [KeyboardButton(text='Ответить')]
                                        ]
                                        )
 
