@@ -50,22 +50,27 @@ if AdminState.is_admin:
         
         if message_db is None:
             await message.answer(text='Новых сообщений нет!')
-            return
-        
+            return None
+
         await state.set_state(AdminState.message_data)
         await state.update_data(message_data = [message_db[4], message_db[5]])
 
         if message_db[3] is not None:
+            if message_db[2] is None:
+                await message.answer_photo(caption=f'''by {message_db[1]}''',
+                                           photo = message_db[3]
+                                           )
+                return None            
             await message.answer_photo(caption = f'''"{message_db[2]} by {message_db[1]}"''',
                                        reply_markup = kb.answer_message_action,
-                                       photo = message_db[3])
-            await state.update_data(message_data=[message.from_user.get('chat').get('id')])
+                                       photo = message_db[3]
+                                       )
         else:
             await message.answer(text = f'''{message_db[2]} by {message_db[1]}''',
                                 reply_markup = kb.reading_messages)
     
 
-    @rt.message(F.text == 'Ответить' and AdminState.message_data)
+    @rt.message(F.text == 'Ответить', AdminState.message_data)
     async def answer_message(message : Message, state: FSMContext):
         await message.answer(text='Напишите сообщение')
         await state.set_state(AdminState.answer_message)
@@ -92,7 +97,7 @@ async def get_message_info(message : Message) -> None:
                     Message id: {message.message_id}, 
                     user id: {message.from_user.id}, 
                     text of message of: {message.text}
-                    dump: {message.model_dump()}'''
+                    dump: {message.model_dump()}''',
                     )
 
 
@@ -150,12 +155,9 @@ async def send_message_2(message : Message, state : FSMContext) -> None:
     chat_id = dump['chat']['id']
     us = str(dump['from_user']['username'])
     message_id = int(dump['message_id'])
-    print(us)
 
     if us != 'None':
         us = '@' + us
-
-
     if data.get('sending') == 'not_anon':
         await db_set_message(username = us,
                              message_text = text,
@@ -176,9 +178,9 @@ async def send_message_2(message : Message, state : FSMContext) -> None:
 
 
 # message_message_attachment=message.photo[-1].file_id
-@rt.callback_query(F.data == 'appreciation')
-async def send_appreciation(): 
-    pass
+@rt.callback_query(F.text == 'appreciation')
+async def send_appreciation(message: Message): 
+    await message.reply_photo(caption='Бубубуб', photo='AgACAgIAAxkBAAIL4mkkvBfw51FA17JUoVT0e88dn8U0AAJZD2sbCyUoSbOCztG6opAvAQADAgADcwADNgQ')
 
 
 @rt.message(Command('chat_id', 'Chat_id'))

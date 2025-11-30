@@ -1,4 +1,4 @@
-from sqlalchemy import select, func
+from sqlalchemy import select
 
 from .models import async_session
 from .models import Message
@@ -51,12 +51,10 @@ async def db_read_message():
                ).order_by(Message.id.asc()).limit(1)
             res_str = await session.execute(q)
             data = res_str.fetchall()[0]
-    
-            print(f'\n Here is the raw message from db: \n {data} \n')
-
            
             await db_delete_data(data_id = data[0])
 
         except IndexError:
             data = None
+
     return data

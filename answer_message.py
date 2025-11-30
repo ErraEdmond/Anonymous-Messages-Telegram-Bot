@@ -1,5 +1,6 @@
-from aiogram import Bot, Dispatcher
 import asyncio
+
+from aiogram import Bot, Dispatcher
 
 class BotConfig():
     '''Bot config class, which is must be initialized only in a main.py, by the bot_ini.'''
