@@ -7,5 +7,5 @@ app/__pycache__
 .pylint.rc
 database.sqlite3
 .true.txt
-config.py
+
 .vscode
