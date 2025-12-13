@@ -147,7 +147,7 @@ async def send_message_with_photo(message : Message, state : FSMContext) -> None
     await state.clear()
 
 
-@rt.message(SendingMessage.sending) 
+@rt.message(SendingMessage.sending)
 async def send_message_2(message : Message, state : FSMContext) -> None:
     data = await state.get_data()
     dump = message.model_dump()
