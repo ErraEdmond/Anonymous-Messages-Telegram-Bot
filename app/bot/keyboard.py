@@ -1,7 +1,9 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup 
-
-
-
+from aiogram.types import (
+                                    InlineKeyboardButton,
+                                    InlineKeyboardMarkup,
+                                    KeyboardButton,
+                                    ReplyKeyboardMarkup,
+)
 
 first_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, 
                                     input_field_placeholder='', 

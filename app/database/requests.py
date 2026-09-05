@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
-from .models import async_session
-from .models import Message
+from .models import Message, async_session
+
 
 async def db_set_message(message_text : str, username : str, message_attachment : str,
                         user_id : int, message_id : int) -> None:

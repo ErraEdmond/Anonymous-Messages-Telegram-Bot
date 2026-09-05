@@ -21,5 +21,5 @@ class Message(Base):
 
 async def async_main():
     '''Create table and starts asyncs main db cycle'''
-    async with engine.begin() as conn: 
+    async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

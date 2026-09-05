@@ -33,5 +33,9 @@ dependencies = [
     "yarl==1.9.4",
 ]
 
+[tool.pyright]
+    venvPath = "."
+    venv = ".venv"
+
 [tool.uv]
     package = false

@@ -1,14 +1,13 @@
-from aiogram.fsm.context import FSMContext
 from aiogram import F, Router
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command, CommandStart
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-import keyboard as kb
-from fsm import SendingMessage, AdminState
-from config import ADMIN, START_MESSAGE, BANNED_USERS
-from app.requests import db_set_message, db_read_message
-from answer_message import answer_to_user
-
+import app.bot.keyboard as kb
+from app.bot.fsm import AdminState, SendingMessage
+from app.core.config_example import ADMIN, BANNED_USERS, START_MESSAGE
+from app.database.requests import db_read_message, db_set_message
+from app.services.answer_message import answer_to_user
 
 rt = Router()
 
@@ -24,7 +23,7 @@ async def hello(message : Message) -> None:
 
 
 @rt.message(F.text == 'Админ панель 🔑')
-async def get_admin_panel(message : Message, state : FSMContext) -> None:
+async def get_admin_panel(message: Message, state: FSMContext) -> None:
     if str(message.from_user.id) in ADMIN:
         await message.answer('''Hello, Admin! Amount of messages:''', 
                             reply_markup=kb.admin_keyboard)
@@ -38,14 +37,14 @@ async def get_admin_panel(message : Message, state : FSMContext) -> None:
 if AdminState.is_admin:
     # @rt.message(str(AdminState.reading.__getstate__) == 'False')
     @rt.message(F.text == 'Прочитать сообщения ✔️')
-    async def read_messages(message : Message, state : FSMContext) -> None:
+    async def read_messages(message: Message, state: FSMContext) -> None:
         await state.set_state(AdminState.reading)
         await state.update_data(reading = True)
         await message.answer(text='Отлично, вот сообщения:',
                             reply_markup=kb.reading_messages)
 
     @rt.message(F.text == 'Читать сообщения')
-    async def reading_messages(message : Message, state: FSMContext):
+    async def reading_messages(message: Message, state: FSMContext):
         message_db = await db_read_message()
         
         if message_db is None:
@@ -71,7 +70,7 @@ if AdminState.is_admin:
     
 
     @rt.message(F.text == 'Ответить', AdminState.message_data)
-    async def answer_message(message : Message, state: FSMContext):
+    async def answer_message(message: Message, state: FSMContext):
         await message.answer(text='Напишите сообщение')
         await state.set_state(AdminState.answer_message)
 
@@ -86,13 +85,13 @@ if AdminState.is_admin:
         
 
     @rt.message(F.text == 'Закончить чтение')
-    async def end_of_reading(message : Message, state : FSMContext) -> None:
+    async def end_of_reading(message: Message, state: FSMContext) -> None:
         await state.clear()
         await message.reply('Отлично почитали :)', reply_markup= kb.first_keyboard)
 
 
 @rt.message(Command('info'))
-async def get_message_info(message : Message) -> None:
+async def get_message_info(message: Message) -> None:
     await message.reply(text=f'''
                     Message id: {message.message_id}, 
                     user id: {message.from_user.id}, 
@@ -103,7 +102,7 @@ async def get_message_info(message : Message) -> None:
 
 @rt.message(F.text == 'Послать сообщение анонимно ✉️')
 @rt.message(F.text == 'Послать сообщение с подписью 📧')
-async def send_message_1(message : Message, state: FSMContext) -> None:
+async def send_message_1(message: Message, state: FSMContext) -> None:
     await state.set_state(SendingMessage.sending)
     if message.text == 'Послать сообщение анонимно ✉️':
         await state.update_data(sending = 'anon')
