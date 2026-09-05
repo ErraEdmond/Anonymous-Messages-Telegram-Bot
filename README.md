@@ -10,6 +10,6 @@ This is a simple asynchronous Telegram bot that can be used for both receiving a
 
 # How to install. 
 
-1. Install all required libraries from *requirements.txt*.
-2. Fill out *config.py* and write in the Telegram bot's token into TOKEN and your Telegram ID in ADMIN to get access to the admin panel. 
-3. Run *main.py*. 
+1. 
+2.
+3. 

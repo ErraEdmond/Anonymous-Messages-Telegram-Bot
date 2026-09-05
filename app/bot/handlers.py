@@ -5,7 +5,7 @@ from aiogram.types import Message
 
 import app.bot.keyboard as kb
 from app.bot.fsm import AdminState, SendingMessage
-from app.core.config_example import ADMIN, BANNED_USERS, START_MESSAGE
+from app.core.config import ADMIN, BANNED_USERS, START_MESSAGE
 from app.database.requests import db_read_message, db_set_message
 from app.services.answer_message import answer_to_user
 
@@ -69,7 +69,7 @@ if AdminState.is_admin:
                                 reply_markup = kb.reading_messages)
     
 
-    @rt.message(F.text == 'Ответить', AdminState.message_data)
+    @rt.message(F.text == 'Ответить', AdminState.message_daуa)
     async def answer_message(message: Message, state: FSMContext):
         await message.answer(text='Напишите сообщение')
         await state.set_state(AdminState.answer_message)
@@ -81,7 +81,7 @@ if AdminState.is_admin:
         data = data['message_data']
         await answer_to_user(text=f'ВАМ ОТВЕТИЛИ: "{message.text}"', chat_id=data[0], message_id=data[1])
         await message.answer(text='Сообщение отправлено!', reply_markup=kb.reading_messages)
-        state.clear()
+        await state.clear()
         
 
     @rt.message(F.text == 'Закончить чтение')
@@ -183,14 +183,14 @@ async def send_appreciation(message: Message):
 
 
 @rt.message(Command('chat_id', 'Chat_id'))
-async def get_chat_id(message : Message) -> None: 
+async def get_chat_id(message: Message) -> None: 
     chat_id = message.model_dump().get('chat').get('id')
     chat_info = await message.bot.get_chat(chat_id=chat_id)
     await message.reply(text=f'{chat_info}, {type(chat_info)}')
 
 
 @rt.message(Command('user_id'))
-async def get_id(message : Message) -> None: 
+async def get_id(message: Message) -> None: 
     user_id = message.model_dump()
     await message.reply(
         text=f"ur id is: {user_id}") 

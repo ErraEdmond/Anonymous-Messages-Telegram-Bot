@@ -5,8 +5,8 @@ class BotConfig:
     """Bot config class, which is must be initialized only in a main.py, by the bot_ini."""
 
     def __init__(self):
-        self.bot = None
-        self.dp = None
+        self.bot: Bot | None = None
+        self.dp: Dispatcher | None = None
 
     def bot_ini(self, token):
         """Point of initialization for a bot in main.py"""
