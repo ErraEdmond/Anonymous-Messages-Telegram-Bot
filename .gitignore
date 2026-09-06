@@ -2,11 +2,7 @@
 __pycache__
 .qodo
 database.sqlite3
-app/__pycache__
 .vscode 
 .pylint.rc
 *.sqlite3
-.true.txt
 config.py
-
-.vscode
